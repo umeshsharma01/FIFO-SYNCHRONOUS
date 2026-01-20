@@ -1,0 +1,34 @@
+module fifo_sync(
+input clk,
+input rst,
+input write_en,
+input read_en,
+input [7:0]din,
+output reg [7:0]dout,
+output reg full,
+output reg empty
+   );
+  reg [7:0]read_pointer;
+  reg [7:0]write_pointer;
+  reg [7:0]memory [3:0];
+  
+ always@(posedge clk or posedge rst)begin;
+ if(rst) begin;
+ write_pointer <=0;read_pointer <= 0;
+ dout <= 0;
+ end
+ 
+ else if (write_en && !full)begin
+ memory[write_pointer]<= din;
+ write_pointer <= write_pointer+1 ;
+ end
+
+ else if (read_en && !empty)begin
+ dout <= memory[read_pointer];
+ read_pointer <= read_pointer+1;
+ end 
+  empty = (write_pointer==read_pointer);
+  full = (write_pointer==8);
+  end
+  
+endmodule
